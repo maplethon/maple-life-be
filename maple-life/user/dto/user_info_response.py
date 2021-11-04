@@ -4,3 +4,9 @@ class UserInfoResponse:
         self.username = username
         self.email = email
         self.accumulated_task_time = accumulated_task_time
+
+    @staticmethod
+    def of(user):
+        return UserInfoResponse(
+            user.user_id, user.username, user.email, user.accumulated_task_time
+        )

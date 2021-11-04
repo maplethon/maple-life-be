@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta
 import bcrypt
 import jwt
 import werkzeug.exceptions as http_exceptions
@@ -17,7 +17,7 @@ class UserService:
         return bcrypt.hashpw(password.encode("UTF-8"), bcrypt.gensalt())
 
     def __create_jwt(self, user_id):
-        payload = {"user_id": user_id, "exp": datetime.now(tz=timezone.utc)}
+        payload = {"user_id": user_id, "exp": datetime.utcnow() + timedelta(seconds=10)}
         return jwt.encode(payload, current_app.config["JWT_SECRET"], "HS256")
 
     def create_new_user(self, request):
@@ -45,8 +45,12 @@ class UserService:
 
         return LoginResponse(user.user_id, self.__create_jwt(user.user_id))
 
-    def getUser(self, user_id):
+    def get_user(self, user_id):
         user = User.find_by_id(user_id)
-        return UserInfoResponse(
-            user.user_id, user.username, user.email, user.accumulated_task_time
-        )
+        return UserInfoResponse.of(user)
+
+    def change_username(self, user_id, new_username):
+        user = User.find_by_id(user_id)
+        user.username = new_username
+        self.db.session.commit()
+        return UserInfoResponse.of(user)
