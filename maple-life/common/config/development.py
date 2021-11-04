@@ -11,3 +11,5 @@ DB = {
 SQLALCHEMY_DATABASE_URI = f"mysql+mysqlconnector://{DB['user']}:{DB['password']}@{DB['host']}:{DB['port']}/{DB['database']}?charset=utf8&collation=utf8_general_ci"
 
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+JWT_SECRET = os.getenv("JWT_SECRET")
