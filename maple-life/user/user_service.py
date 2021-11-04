@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 import bcrypt
 import jwt
 import werkzeug.exceptions as http_exceptions
@@ -5,11 +6,19 @@ from flask import current_app
 
 from user.domain.user import User
 from user.dto.login_response import LoginResponse
+from user.dto.user_info_response import UserInfoResponse
 
 
 class UserService:
     def __init__(self, db):
         self.db = db
+
+    def __hash_password(self, password):
+        return bcrypt.hashpw(password.encode("UTF-8"), bcrypt.gensalt())
+
+    def __create_jwt(self, user_id):
+        payload = {"user_id": user_id, "exp": datetime.now(tz=timezone.utc)}
+        return jwt.encode(payload, current_app.config["JWT_SECRET"], "HS256")
 
     def create_new_user(self, request):
         email = request["email"]
@@ -36,10 +45,8 @@ class UserService:
 
         return LoginResponse(user.user_id, self.__create_jwt(user.user_id))
 
-    def __hash_password(self, password):
-        return bcrypt.hashpw(password.encode("UTF-8"), bcrypt.gensalt())
-
-    def __create_jwt(self, user_id):
-        return jwt.encode(
-            {"user_id": user_id}, current_app.config["JWT_SECRET"], "HS256"
+    def getUser(self, user_id):
+        user = User.find_by_id(user_id)
+        return UserInfoResponse(
+            user.user_id, user.username, user.email, user.accumulated_task_time
         )

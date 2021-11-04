@@ -46,7 +46,7 @@ def create_endpoints(app, services):
     @app.errorhandler(http_exceptions.BadRequest)
     def handle_bad_request(e):
         logging.error(e)
-        return ApiResponse.bad_request()
+        return ApiResponse.bad_request(e.description)
 
     @app.route("/ping", methods=["GET"])
     def ping():

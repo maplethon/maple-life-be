@@ -10,3 +10,6 @@ class User(db.Model):
 
     def find_by_email(email):
         return User.query.filter_by(email=email).first()
+
+    def find_by_id(user_id):
+        return User.query.get(user_id)

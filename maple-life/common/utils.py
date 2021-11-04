@@ -22,6 +22,8 @@ def login_required(f):
             )
         except jwt.InvalidTokenError:
             raise http_exceptions.BadRequest("토큰이 잘못되었습니다")
+        except jwt.ExpiredSignatureError:
+            raise http_exceptions.BadRequest("토크이 만료되었습니다")
 
         g.user_id = payload["user_id"]
         return f(*args, **kwargs)

@@ -27,9 +27,9 @@ class ApiResponse:
         )
 
     @classmethod
-    def bad_request(cls):
+    def bad_request(cls, message):
         return Response(
-            cls("bad request").__to_json(), mimetype="application/json", status=400
+            cls(message).__to_json(), mimetype="application/json", status=400
         )
 
     @classmethod
