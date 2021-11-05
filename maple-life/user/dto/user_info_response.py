@@ -3,7 +3,7 @@ class UserInfoResponse:
         self.user_id = user_id
         self.username = username
         self.email = email
-        self.accumulated_task_time = accumulated_task_time
+        self.accumulated_task_time = float(accumulated_task_time)
 
     @staticmethod
     def of(user):

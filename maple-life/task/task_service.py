@@ -24,7 +24,10 @@ class TaskService:
         )
 
     def __get_total_task_time(self, tasks):
-        return sum([float(task.expected_time) for task in tasks])
+        completed_tasks = [
+            task for task in tasks if task.status == TaskStatus.DOING.name
+        ]
+        return sum([float(task.expected_time) for task in completed_tasks])
 
     def __get_available_time(self, total_task_time):
         HOURS_IN_DAY = 24
@@ -91,7 +94,9 @@ class TaskService:
         task.status = TaskStatus[task.status].complete().name
 
         user = User.find_by_id(user_id)
-        user.accumulated_task_time += task.expected_time
+        user.accumulated_task_time = float(user.accumulated_task_time) + float(
+            task.expected_time
+        )
 
         self.db.session.commit()
 

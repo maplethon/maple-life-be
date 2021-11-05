@@ -6,7 +6,7 @@ class User(db.Model):
     email = db.Column(db.String(320))
     username = db.Column(db.String(150))
     hashed_password = db.Column(db.String(100))
-    accumulated_task_time = db.Column(db.BIGINT)
+    accumulated_task_time = db.Column(db.Numeric(10, 1))
 
     def find_by_email(email):
         return User.query.filter_by(email=email).first()
