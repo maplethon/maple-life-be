@@ -33,6 +33,15 @@ class TaskService:
 
         return available_time
 
+    def __validate_task(self, user_id, task_id):
+        task = Task.find_by_id(task_id)
+
+        if task is None:
+            raise http_exceptions.NotFound("존재하지 않는 태스크입니다")
+
+        if task.user_id != user_id:
+            raise http_exceptions.BadRequest("권한이 없습니다")
+
     def save_task(self, user_id, request):
         new_task = self.__create_task(user_id, request)
         self.db.session.add(new_task)
@@ -54,3 +63,22 @@ class TaskService:
         total_task_time = self.__get_total_task_time(tasks)
         available_time = self.__get_available_time(total_task_time)
         return GetAllTaskResponse(available_time, tasks)
+
+    def update_task(self, user_id, task_id, request):
+        self.__validate_task(user_id, task_id)
+        task = Task.find_by_id(task_id)
+        task.task_title = request["task_title"]
+        task.expected_time = request["expected_time"]
+        task.icon = request["icon"]
+
+        tasks = Task.get_all_task_by_user(user_id)
+        total_task_time = self.__get_total_task_time(tasks)
+
+        try:
+            available_task_time = self.__get_available_time(total_task_time)
+            self.db.session.commit()
+        except http_exceptions.BadRequest as e:
+            self.db.session.rollback()
+            raise e
+
+        return CreateTaskResponse(available_task_time, TaskResponse.of(task))

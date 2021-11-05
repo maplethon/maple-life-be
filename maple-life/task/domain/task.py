@@ -11,5 +11,8 @@ class Task(db.Model):
     user = db.relationship("User", backref=db.backref("tasks"))
     user_id = db.Column(db.BIGINT, db.ForeignKey("user.user_id", ondelete="CASCADE"))
 
+    def find_by_id(task_id):
+        return Task.query.get(task_id)
+
     def get_all_task_by_user(user_id):
         return Task.query.filter_by(user_id=user_id).all()

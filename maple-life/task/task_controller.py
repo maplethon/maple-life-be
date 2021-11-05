@@ -18,4 +18,11 @@ def create_task_blueprint(services):
     def get_all_task():
         return ApiResponse.ok(task_service.get_all_task(g.user_id))
 
+    @task_bp.route("/<int:task_id>", methods=["PUT"])
+    @login_required
+    def update_task(task_id):
+        return ApiResponse.ok(
+            task_service.update_task(g.user_id, task_id, request.json)
+        )
+
     return task_bp
