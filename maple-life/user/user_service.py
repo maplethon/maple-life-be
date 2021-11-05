@@ -17,7 +17,7 @@ class UserService:
         return bcrypt.hashpw(password.encode("UTF-8"), bcrypt.gensalt())
 
     def __create_jwt(self, user_id):
-        payload = {"user_id": user_id, "exp": datetime.utcnow() + timedelta(seconds=10)}
+        payload = {"user_id": user_id, "exp": datetime.utcnow() + timedelta(days=7)}
         return jwt.encode(payload, current_app.config["JWT_SECRET"], "HS256")
 
     def create_new_user(self, request):
