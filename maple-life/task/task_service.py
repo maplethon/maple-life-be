@@ -1,11 +1,13 @@
+from user.domain.user import User
 from werkzeug import exceptions as http_exceptions
 
 from task.domain.icon_types import IconTypes
 from task.domain.task import Task
 from task.domain.task_status import TaskStatus
+from task.dto.complete_task_response import CompleteTaskResponse
 from task.dto.create_task_response import CreateTaskResponse
-from task.dto.task_response import TaskResponse
 from task.dto.get_all_task_response import GetAllTaskResponse
+from task.dto.task_response import TaskResponse
 
 
 class TaskService:
@@ -82,3 +84,15 @@ class TaskService:
             raise e
 
         return CreateTaskResponse(available_task_time, TaskResponse.of(task))
+
+    def complete_task(self, user_id, task_id):
+        self.__validate_task(user_id, task_id)
+        task = Task.find_by_id(task_id)
+        task.status = TaskStatus[task.status].complete().name
+
+        user = User.find_by_id(user_id)
+        user.accumulated_task_time += task.expected_time
+
+        self.db.session.commit()
+
+        return CompleteTaskResponse(user.accumulated_task_time)

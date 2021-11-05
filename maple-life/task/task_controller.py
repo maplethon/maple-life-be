@@ -25,4 +25,9 @@ def create_task_blueprint(services):
             task_service.update_task(g.user_id, task_id, request.json)
         )
 
+    @task_bp.route("/<int:task_id>/status/done", methods=["PATCH"])
+    @login_required
+    def complete_task(task_id):
+        return ApiResponse.ok(task_service.complete_task(g.user_id, task_id))
+
     return task_bp
