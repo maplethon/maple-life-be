@@ -1,5 +1,4 @@
 import werkzeug.exceptions as http_exceptions
-from dotenv import load_dotenv
 from flask import Flask
 import logging
 
@@ -47,6 +46,11 @@ def create_endpoints(app, services):
     def handle_bad_request(e):
         logging.error(e)
         return ApiResponse.bad_request(e.description)
+
+    @app.errorhandler(http_exceptions.NotFound)
+    def handle_not_found(e):
+        logging.error(e)
+        return ApiResponse.not_found(e.description)
 
     @app.route("/ping", methods=["GET"])
     def ping():

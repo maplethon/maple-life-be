@@ -33,7 +33,7 @@ class ApiResponse:
         )
 
     @classmethod
-    def not_found(cls):
+    def not_found(cls, message):
         return Response(
             cls("not found").__to_json(), mimetype="application/json", status=404
         )

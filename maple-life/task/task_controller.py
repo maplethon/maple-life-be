@@ -30,4 +30,9 @@ def create_task_blueprint(services):
     def complete_task(task_id):
         return ApiResponse.ok(task_service.complete_task(g.user_id, task_id))
 
+    @task_bp.route("/<int:task_id>", methods=["DELETE"])
+    @login_required
+    def delete_task(task_id):
+        return ApiResponse.ok(task_service.delete_task(g.user_id, task_id))
+
     return task_bp

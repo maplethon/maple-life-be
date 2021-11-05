@@ -96,3 +96,9 @@ class TaskService:
         self.db.session.commit()
 
         return CompleteTaskResponse(user.accumulated_task_time)
+
+    def delete_task(self, user_id, task_id):
+        self.__validate_task(user_id, task_id)
+        task = Task.find_by_id(task_id)
+        self.db.session.delete(task)
+        self.db.session.commit()
