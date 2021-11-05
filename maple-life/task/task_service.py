@@ -48,7 +48,7 @@ class TaskService:
         new_task = self.__create_task(user_id, request)
         self.db.session.add(new_task)
 
-        tasks = Task.get_all_task_by_user(user_id)
+        tasks = Task.find_all_by_user_id(user_id)
         total_task_time = self.__get_total_task_time(tasks)
 
         try:
@@ -61,7 +61,7 @@ class TaskService:
         return CreateTaskResponse(available_task_time, TaskResponse.of(new_task))
 
     def get_all_task(self, user_id):
-        tasks = Task.get_all_task_by_user(user_id)
+        tasks = Task.find_all_by_user_id(user_id)
         total_task_time = self.__get_total_task_time(tasks)
         available_time = self.__get_available_time(total_task_time)
         return GetAllTaskResponse(available_time, tasks)
@@ -73,7 +73,7 @@ class TaskService:
         task.expected_time = request["expected_time"]
         task.icon = request["icon"]
 
-        tasks = Task.get_all_task_by_user(user_id)
+        tasks = Task.find_all_by_user_id(user_id)
         total_task_time = self.__get_total_task_time(tasks)
 
         try:

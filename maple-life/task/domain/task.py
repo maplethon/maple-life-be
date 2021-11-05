@@ -14,5 +14,5 @@ class Task(db.Model):
     def find_by_id(task_id):
         return Task.query.get(task_id)
 
-    def get_all_task_by_user(user_id):
+    def find_all_by_user_id(user_id):
         return Task.query.filter_by(user_id=user_id).all()

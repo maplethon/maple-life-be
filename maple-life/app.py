@@ -52,6 +52,6 @@ def create_endpoints(app, services):
         logging.error(e)
         return ApiResponse.not_found(e.description)
 
-    @app.route("/ping", methods=["GET"])
+    @app.get("/ping")
     def ping():
         return ApiResponse.ok()
