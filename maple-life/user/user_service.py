@@ -20,6 +20,17 @@ class UserService:
         payload = {"user_id": user_id, "exp": datetime.utcnow() + timedelta(days=7)}
         return jwt.encode(payload, current_app.config["JWT_SECRET"], "HS256")
 
+    def __validate_user(self, email):
+        if User.find_by_email(email) is None:
+            raise http_exceptions.NotFound(f"이메일, 혹은 비밀번호가 잘못되었습니다")
+
+    def __validate_password(self, password, hashed_password):
+        is_valid = bcrypt.checkpw(
+            password.encode("utf-8"), hashed_password.encode("utf-8")
+        )
+        if not is_valid:
+            raise http_exceptions.BadRequest("이메일, 혹은 비밀번호가 잘못되었습니다")
+
     def create_new_user(self, request):
         email = request["email"]
 
@@ -38,10 +49,11 @@ class UserService:
 
     def login(self, request):
         email = request["email"]
-        user = User.find_by_email(email)
+        password = request["password"]
 
-        if user is None:
-            raise http_exceptions.NotFound(f"이메일{email} 사용자가 존재하지 않습니다")
+        self.__validate_user(email)
+        user = User.find_by_email(email)
+        self.__validate_password(password, user.hashed_password)
 
         return LoginResponse(user.user_id, self.__create_jwt(user.user_id))
 
