@@ -24,8 +24,11 @@ def create_user_blueprint(services):
         return ApiResponse.ok(user_service.get_user(g.user_id))
 
     @user_bp.patch("/<int:user_id>/username")
+    @login_required
     def change_username(user_id):
         new_username = request.json["username"]
-        return ApiResponse.ok(user_service.change_username(user_id, new_username))
+        return ApiResponse.ok(
+            user_service.change_username(g.user_id, user_id, new_username)
+        )
 
     return user_bp

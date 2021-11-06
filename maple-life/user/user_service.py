@@ -31,6 +31,10 @@ class UserService:
         if not is_valid:
             raise http_exceptions.BadRequest("이메일, 혹은 비밀번호가 잘못되었습니다")
 
+    def __authorize_user(self, g_user_id, user_id):
+        if g_user_id != user_id:
+            raise http_exceptions.BadRequest("권한이 없습니다")
+
     def create_new_user(self, request):
         email = request["email"]
 
@@ -61,7 +65,8 @@ class UserService:
         user = User.find_by_id(user_id)
         return UserInfoResponse.of(user)
 
-    def change_username(self, user_id, new_username):
+    def change_username(self, g_user_id, user_id, new_username):
+        self.__authorize_user(g_user_id, user_id)
         user = User.find_by_id(user_id)
         user.username = new_username
         self.db.session.commit()
