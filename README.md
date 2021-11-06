@@ -15,6 +15,7 @@ $ pip install -r requirements.txt
 ```
 
 ## `.env` 파일 작성
+- 프로젝트 루트 디렉토리 (`/maple-life-be`)에 작성 
 - 필요 환경변수
 ```bash
 FLASK_APP=maple-life/app.py
